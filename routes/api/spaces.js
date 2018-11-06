@@ -239,7 +239,7 @@ router.post('/', function (req, res, next) {
             attrs._id = uuidv4();
             attrs.creator_id = req.user._id;
             attrs.edit_hash = crypto.randomBytes(64).toString('hex').substring(0, 7);
-            attrs.edit_slug = slug(attrs.name);
+            attrs.edit_slug = slug(attrs.name || '');
 
             db.Space.create(attrs).then(createdSpace => {
                 //if (err) res.sendStatus(400);
@@ -329,7 +329,7 @@ router.put('/:id', function (req, res) {
     }
 
     newAttr.updated_at = new Date();
-    newAttr.edit_slug = slug(newAttr['name']);
+    newAttr.edit_slug = slug(newAttr['name'] || '');
 
     delete newAttr['_id'];
     delete newAttr['editor_name'];
