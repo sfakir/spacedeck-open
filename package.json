@@ -33,6 +33,7 @@
     "morgan": "1.8.1",
     "node-phantom-simple": "2.2.4",
     "nodemailer": "^4.6.7",
+    "pg": "^7.6.0",
     "phantomjs-prebuilt": "2.1.14",
     "read-chunk": "^2.1.0",
     "request": "2.81.0",

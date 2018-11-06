@@ -1,4 +1,5 @@
 const Umzug = require('umzug');
+const _ = require('lodash');
 
 function sequel_log(a, b, c) {
     console.log(a);
@@ -6,10 +7,8 @@ function sequel_log(a, b, c) {
 
 const Sequelize = require('sequelize');
 const config = require('config');
-console.log('config', config);
-return;
 
-const sequelize = new Sequelize('database', 'username', 'password', {
+const sequlizeDefaults = {
     host: 'localhost',
     dialect: 'sqlite',
 
@@ -26,7 +25,10 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 
     // http://docs.sequelizejs.com/manual/tutorial/querying.html#operators
     operatorsAliases: false
-});
+};
+
+const sequlizeOptions =  _.extend(sequlizeDefaults, config.db.sequlizeOptions);
+const sequelize = new Sequelize( config.db.database , config.db.username, config.db.password, sequlizeOptions);
 
 var User;
 var Session;
@@ -165,7 +167,7 @@ module.exports = {
         crop_w: Sequelize.INTEGER,
         crop_h: Sequelize.INTEGER,
         shape: Sequelize.STRING,
-        shape_svg: Sequelize.STRING,
+        shape_svg: Sequelize.TEXT,
         padding_left: Sequelize.INTEGER,
         padding_right: Sequelize.INTEGER,
         padding_top: Sequelize.INTEGER,

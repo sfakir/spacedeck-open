@@ -33,12 +33,12 @@
   "mail_smtp_user": "your.smtp.user",
   "mail_smtp_pass": "your.secret.smtp.password",
   "db": {
-    "database":"",
-    "username":"",
+    "database":"spacedeck",
+    "username":"simonfakir",
     "password":"",
     "sequlizeOptions": {
       "host": "localhost",
-      "dialect": "sqlite",
+      "dialect": "postgres",
       "storage": "database.sqlite"
     },
   }
