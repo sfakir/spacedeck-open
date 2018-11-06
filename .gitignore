@@ -7,3 +7,4 @@ javascripts/spacedeck.js
 database.sqlite
 config/development.json
 config/production.json
+build/

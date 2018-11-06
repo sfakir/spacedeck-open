@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "electron .",
+    "build": "webpack --mode production",
     "dev": "NODE_ENV=development node spacedeck.js"
   },
   "engines": {
@@ -62,5 +63,11 @@
   },
   "keywords": [],
   "author": "Lukas F. Hartmann, Martin Güther",
-  "license": "AGPLv3"
+  "license": "AGPLv3",
+  "devDependencies": {
+    "copy-webpack-plugin": "^4.6.0",
+    "webpack": "^4.25.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-merge-and-include-globally": "^2.0.11"
+  }
 }

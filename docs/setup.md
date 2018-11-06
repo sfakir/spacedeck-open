@@ -23,10 +23,10 @@ We have also an ansible role ready, please feel free to contact me (simon@fakir-
     nano production.json
     cd ..
     
-Build assets:
 
-    npm i -g gulp
-    gulp styles
+Build assets using webpack
+
+    npm run build 
     
     
 # Setup nginx
@@ -35,3 +35,11 @@ Build assets:
     
 see nginx.sample.conf
     
+# Start 
+
+We recommend to use pm2 to start and monitor the app. Just go into the root folter and run this:
+
+
+    npm install -g pm2
+    pm2 start --env production
+

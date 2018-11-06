@@ -29,8 +29,7 @@ router.get('/', async (req, res, next) => {
         return;
     }
 
-    res.json({msg: "/spaces/" + id + "?spaceAuth=" + space.edit_hash});
-    // res.redirect("/spaces/" + id + "?spaceAuth=" + space.edit_hash);
+    res.redirect("/spaces/" + id + "?spaceAuth=" + space.edit_hash);
 });
 
 async function createPublicSpace(id) {

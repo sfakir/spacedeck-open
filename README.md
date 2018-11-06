@@ -1,10 +1,6 @@
-# Spacedeck Open
+# Open Spacedeck Plus
 
-This is the free and open source version of Spacedeck, a web based, real time, collaborative whiteboard application with rich media support. Spacedeck was developed in 6 major releases during Autumn 2011 until the end of 2016 and was originally a commercial SaaS. The developers were Lukas F. Hartmann (mntmn) and Martin Güther (magegu).
-
-The spacedeck.com online service was shut down on May 1st 2018. We decided to open-source Spacedeck to allow educational and other organizations who currently rely on Spacedeck to migrate to a self-hosted or local version.
-
-We appreciate filed issues, pull requests and general discussion.
+This package is forked from open space deck to make it usuable in productive use.
 
 # Features
 
@@ -22,19 +18,6 @@ We appreciate filed issues, pull requests and general discussion.
 - Education: Virtual classwork with multimedia
 - Creative: Mood boards, Brainstorming, Design Thinking
 - Visual note taking and planning
-
-# Environment and Configuration
-
-Create config/production.json
-
-Run app in production (or any other env):
-
-```shell
-$ export NODE_ENV=production
-$ node my-app.js
-```
-
-
 
 
 
