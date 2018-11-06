@@ -17,7 +17,7 @@ async function authenticateSpace(space, user, userEditHash) {
 
     if (userEditHash && space.edit_hash && userEditHash === space.edit_hash) {
         // Todo I think i should the edit hash here?
-        return { anonyoums: true, spaceAuth: 'editor' };
+        return { anonyoums: true, role: 'editor' };
     }
 
     // handle public spaces
@@ -29,7 +29,7 @@ async function authenticateSpace(space, user, userEditHash) {
             // todo: password not hashed!
             throw new createError(403, "password wrong");
         }
-        return { anonyoums: true, spaceAuth: 'viewer' };
+        return { anonyoums: true, role: 'viewer' };
     }
 
     // handle user is registered (and has a role in space)
@@ -37,7 +37,7 @@ async function authenticateSpace(space, user, userEditHash) {
         const roleInSpace = await db.getUserRoleInSpacePromise(space, req.user);
         if (roleInSpace !== "none") {
             // const chosenLevel = getHigherRole(roleInSpace, userRequestAuth);
-            return { anonyoums: false, spaceAuth: roleInSpace };
+            return { anonyoums: false, role: roleInSpace };
         }
     }
 
@@ -74,14 +74,14 @@ function getHigherRole(roleA, roleB) {
  */
 module.exports = async (req, res, next) => {
     let spaceId = req.params.id;
+    const userRequestAuth = req.spaceAuth;
+    console.log('userRequestAuth',req.spaceAuth, req.headers['x-spacedeck-space-auth'])
 
     const space = await db.Space.findOne({ where: { "_id": spaceId } })
     if (!space) {
         res.status(404).json({ "error": "space_not_found" });
         return;
     }
-    const userRequestAuth = req["spaceAuth"];
-
 
     // special permission for screenshot/pdf export from backend
     if (req.query['api_token'] && req.query['api_token'] == config.get('phantom_api_secret')) {
@@ -96,6 +96,7 @@ module.exports = async (req, res, next) => {
             }
             req['space'] = space;
             req['spaceRole'] = role;
+            console.log('setting role', role);
             res.header("x-spacedeck-space-role", req['spaceRole']);
             next();
         })

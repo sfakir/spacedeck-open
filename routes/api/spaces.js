@@ -321,7 +321,7 @@ router.put('/:id', function (req, res) {
     var space = req.space;
     var newAttr = req.body;
 
-    console.log('req',req);
+    console.log('req', req['spaceRole']);
 
     if (req['spaceRole'] != "editor" && req['spaceRole'] != "admin") {
         res.sendStatus(403);

@@ -17,6 +17,8 @@
   "mongodb_host": "localhost",
   "redis_host": "localhost",
 
+  "featureMessages": false,
+
   "google_access" : "",
   "google_secret" : "",
   "admin_pass": "very_secret_admin_password",
@@ -29,5 +31,15 @@
   "mail_smtp_secure": true,
   "mail_smtp_require_tls": true,
   "mail_smtp_user": "your.smtp.user",
-  "mail_smtp_pass": "your.secret.smtp.password"
+  "mail_smtp_pass": "your.secret.smtp.password",
+  "db": {
+    "database":"",
+    "username":"",
+    "password":"",
+    "sequlizeOptions": {
+      "host": "localhost",
+      "dialect": "sqlite",
+      "storage": "database.sqlite"
+    },
+  }
 }

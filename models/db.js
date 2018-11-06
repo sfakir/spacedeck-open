@@ -5,6 +5,10 @@ function sequel_log(a, b, c) {
 }
 
 const Sequelize = require('sequelize');
+const config = require('config');
+console.log('config', config);
+return;
+
 const sequelize = new Sequelize('database', 'username', 'password', {
     host: 'localhost',
     dialect: 'sqlite',

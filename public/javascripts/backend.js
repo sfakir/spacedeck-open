@@ -11,7 +11,7 @@ function load_resource(method, path, data, on_success, on_error, on_progress) {
   req.onload = function(evt,b,c) {
     if (req.status>=200 && req.status<=299) {
       var parsed = null;
-      
+
       try {
         var parsed = JSON.parse(req.response);
       } catch(e) {};
@@ -53,7 +53,7 @@ function load_resource(method, path, data, on_success, on_error, on_progress) {
 
   if (space_auth) {
     console.log("set space auth", space_auth);
-    req.setRequestHeader("X-Spacedeck-Space-Auth", space_auth);
+        req.setRequestHeader("X-Spacedeck-Space-Auth", space_auth);
   }
 
   if (channel_id) {
