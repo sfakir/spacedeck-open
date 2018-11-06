@@ -94,6 +94,7 @@ app.use('/api/spaces', spaceRouter);
 spaceRouter.use('/:id/artifacts', require('./routes/api/space_artifacts'));
 spaceRouter.use('/:id/memberships', require('./routes/api/space_memberships'));
 spaceRouter.use('/:id/messages', require('./routes/api/space_messages'));
+app.use('/autocreate/:id', require('./routes/api/space_autocreate'));
 spaceRouter.use('/:id/digest', require('./routes/api/space_digest'));
 spaceRouter.use('/:id', require('./routes/api/space_exports'));
 
@@ -109,7 +110,7 @@ if (config.get('storage_local_path')) {
 
 // catch 404 and forward to error handler
 //app.use(require('./middlewares/404'));
-if (app.get('env') == 'development') {
+if (app.get('env') === 'development') {
   app.set('view cache', false);
   swig.setDefaults({cache: false});
 } else {

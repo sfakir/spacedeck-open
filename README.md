@@ -23,6 +23,21 @@ We appreciate filed issues, pull requests and general discussion.
 - Creative: Mood boards, Brainstorming, Design Thinking
 - Visual note taking and planning
 
+# Environment and Configuration
+
+Create config/production.json
+
+Run app in production (or any other env):
+
+```shell
+$ export NODE_ENV=production
+$ node my-app.js
+```
+
+
+
+
+
 # Data Import from Spacedeck.com
 
 Spacedeck Open has a data import feature that you can use to migrate your ZIP export from Spacedeck.com.

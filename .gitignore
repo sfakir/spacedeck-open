@@ -3,4 +3,5 @@ javascripts/maps
 javascripts/spacedeck.js
 *.swp
 *~
+.idea
 

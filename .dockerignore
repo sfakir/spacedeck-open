@@ -12,3 +12,5 @@ coverage
 .lock-wscript
 build/Release
 node_modules
+config/development.json
+config/production.json
