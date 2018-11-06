@@ -48,15 +48,16 @@ swig.setFilter('cdn', function(input, idx) {
 app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
 
-if (isProduction) {
-  app.set('views', path.join(__dirname, 'build', 'views'));
-  app.use(favicon(path.join(__dirname, 'build', 'assets', 'images', 'favicon.png')));
-  app.use(express.static(path.join(__dirname, 'build', 'assets')));
-} else {
+// @todo: unclear at the moment how the build/{views,assets} folders are created;
+// if (isProduction) {
+//   app.set('views', path.join(__dirname, 'build', 'views'));
+//   app.use(favicon(path.join(__dirname, 'build', 'assets', 'images', 'favicon.png')));
+//   app.use(express.static(path.join(__dirname, 'build', 'assets')));s
+// } else {
   app.set('views', path.join(__dirname, 'views'));
   app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.png')));
   app.use(express.static(path.join(__dirname, 'public')));
-}
+// }
 
 app.use(bodyParser.json({
   limit: '50mb'
