@@ -4,9 +4,8 @@ Recommended credentials:
 
  - SMTP Emailing
  - MySQL or Postgres
- - 
 
-
+outer
 
    
    
