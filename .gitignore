@@ -1,4 +1,5 @@
 node_modules
+build
 javascripts/maps
 javascripts/spacedeck.js
 *.swp
@@ -7,4 +8,4 @@ javascripts/spacedeck.js
 database.sqlite
 config/development.json
 config/production.json
-build/
+
