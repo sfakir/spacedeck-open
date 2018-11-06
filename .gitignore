@@ -4,4 +4,7 @@ javascripts/spacedeck.js
 *.swp
 *~
 .idea
+database.sqlite
+config/development.json
+config/production.json
 

@@ -29,21 +29,19 @@ router.get('/', async (req, res, next) => {
         return;
     }
 
-    console.log('id', space);
-
     res.json({msg: "/spaces/" + id + "?spaceAuth=" + space.edit_hash});
     // res.redirect("/spaces/" + id + "?spaceAuth=" + space.edit_hash);
 });
 
 async function createPublicSpace(id) {
     attrs = {};
-    attrs.id = id;
+    attrs._id = id;
     attrs.creator_id = null; // req.user._id;
     attrs.edit_hash = crypto.randomBytes(64).toString('hex').substring(0, 7);
     attrs.edit_slug = id;
     attrs.access_mode = 'public';
     let newSpace = await db.Space.create(attrs);
-    console.log('newSpace', newSpace);
+
     return newSpace;
 
 

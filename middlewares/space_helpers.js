@@ -25,11 +25,12 @@ module.exports = (req, res, next) => {
         if (spaceAuth && (spaceAuth === space.edit_hash)) {
             role = "editor";
         } else {
-            if (space.access_mode == "public") {
+            if (space.access_mode === "public") {
                 role = "viewer";
             } else {
                 role = "none";
             }
+
         }
 
         if (req.user) {
@@ -69,52 +70,58 @@ module.exports = (req, res, next) => {
         }
 
 
-        if (space.access_mode == "public") {
-            if (space.password) {
-                if (req.spacePassword) {
-                    if (req.spacePassword === space.password) {
-                        finalizeAnonymousLogin(space, req["spaceAuth"]);
-                    } else {
-                        res.status(403).json({
-                            "error": "password_wrong"
-                        });
-                    }
-                } else {
-                    res.status(401).json({
-                        "error": "password_required"
-                    });
-                }
-            } else {
+        console.log('space.access_mode', space.access_mode);
+
+        if (space.access_mode === "public") {
+            if (!space.password) {
                 finalizeAnonymousLogin(space, req["spaceAuth"]);
-            }
-
-        } else {
-            // space is private
-
-            // special permission for screenshot/pdf export from backend
-            if (req.query['api_token'] && req.query['api_token'] == config.get('phantom_api_secret')) {
-                finalizeReq(space, "viewer");
                 return;
             }
 
-            if (req.user) {
-                db.getUserRoleInSpace(space, req.user, function (role) {
-                    if (role == "none") {
-                        finalizeAnonymousLogin(space, req["spaceAuth"]);
-                    } else {
-                        finalizeReq(space, role);
-                    }
+            if (!req.spacePassword) {
+                res.status(401).json({
+                    "error": "password_required"
                 });
-            } else {
-                if (req.spaceAuth && space.edit_hash) {
-                    finalizeAnonymousLogin(space, req["spaceAuth"]);
-                } else {
-                    res.status(403).json({
-                        "error": "auth_required"
-                    });
-                }
+                return;
             }
+
+            if (req.spacePassword !== space.password) {
+                res.status(403).json({
+                    "error": "password_wrong"
+                });
+                return;
+            }
+            finalizeAnonymousLogin(space, req["spaceAuth"]);
+            return;
         }
 
-    });
+        // space is private
+
+        // special permission for screenshot/pdf export from backend
+        if (req.query['api_token'] && req.query['api_token'] == config.get('phantom_api_secret')) {
+            finalizeReq(space, "viewer");
+            return;
+        }
+
+        if (req.user) {
+            db.getUserRoleInSpace(space, req.user, function (role) {
+                if (role === "none") {
+                    finalizeAnonymousLogin(space, req["spaceAuth"]);
+                    return;
+                }
+                finalizeReq(space, role);
+
+            });
+            return;
+        }
+        if (req.spaceAuth && space.edit_hash) {
+            finalizeAnonymousLogin(space, req["spaceAuth"]);
+        }
+
+        res.status(403).json({
+            "error": "auth_required"
+        });
+
+    }
+
 }
