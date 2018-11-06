@@ -276,6 +276,12 @@ module.exports = {
 
     },
 
+    getUserRoleInSpacePromise: (originalSpace, user) => {
+        const self = this;
+        return new Promise((resolve, reject) => {
+            self.getUserRoleInSpace(originalSpace, user, (res) => resolve(res));
+        });
+    },
     getUserRoleInSpace: (originalSpace, user, cb) => {
         originalSpace.path = [];
         console.log("getUserRoleInSpace", originalSpace._id, user._id, user.home_folder_id);

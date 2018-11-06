@@ -2,126 +2,107 @@
 
 const db = require('../models/db');
 var config = require('config');
+const createError = require('http-errors')
 
-module.exports = (req, res, next) => {
+/**
+ * Not sure for the case:
+ *  - user has a role in the room
+ *  and uses edithash...?
+ * @param space
+ * @param user
+ * @param userEditHash
+ * @returns {Promise<*>}
+ */
+async function authenticateSpace(space, user, userEditHash) {
+
+    if (userEditHash && space.edit_hash && userEditHash === space.edit_hash) {
+        // Todo I think i should the edit hash here?
+        return { anonyoums: true, spaceAuth: 'editor' };
+    }
+
+    // handle public spaces
+    if (space.access_mode === "public") {
+        if (space.password && !req.spacePassword) {
+            throw new createError(403, "password missing");
+        }
+        if (space.password && space.password !== req.spacePassword) {
+            // todo: password not hashed!
+            throw new createError(403, "password wrong");
+        }
+        return { anonyoums: true, spaceAuth: 'viewer' };
+    }
+
+    // handle user is registered (and has a role in space)
+    if (user) {
+        const roleInSpace = await db.getUserRoleInSpacePromise(space, req.user);
+        if (roleInSpace !== "none") {
+            // const chosenLevel = getHigherRole(roleInSpace, userRequestAuth);
+            return { anonyoums: false, spaceAuth: roleInSpace };
+        }
+    }
+
+    throw new createError(401, "not authenticated");
+
+
+}
+
+/**
+ * Known roles:
+ *  admin;editor;viewer
+ * @param roleA
+ * @param roleB
+ * @deprecated
+ * @returns {*}
+ */
+function getHigherRole(roleA, roleB) {
+    if (roleA === "admin" || roleB === 'admin') {
+        return "admin";
+    }
+    if (roleA === "editor" || roleB === 'editor') {
+        return "editor";
+    }
+    return roleA;
+}
+
+/**
+ * Comment: this module should be completely rewritten;
+ * it's really tough to follow the logic here.
+ *
+ * @param req
+ * @param res
+ * @param next
+ */
+module.exports = async (req, res, next) => {
     let spaceId = req.params.id;
 
-    let finalizeReq = (space, role) => {
-        if (role === "none") {
-            res.status(403).json({
-                "error": "access denied"
-            });
-        } else {
+    const space = await db.Space.findOne({ where: { "_id": spaceId } })
+    if (!space) {
+        res.status(404).json({ "error": "space_not_found" });
+        return;
+    }
+    const userRequestAuth = req["spaceAuth"];
+
+
+    // special permission for screenshot/pdf export from backend
+    if (req.query['api_token'] && req.query['api_token'] == config.get('phantom_api_secret')) {
+        finalizeReq(space, "viewer");
+        return;
+    }
+    Promise.resolve()
+        .then(() => authenticateSpace(space, req.user, userRequestAuth))
+        .then(({ anonyoums, role }) => {
+            if (role === "none") {
+                throw new createError(403, "access denied");
+            }
             req['space'] = space;
             req['spaceRole'] = role;
             res.header("x-spacedeck-space-role", req['spaceRole']);
             next();
-        }
-    };
+        })
+        .catch((error) => {
+            res.send(error)
+        })
+    // });
 
-    var finalizeAnonymousLogin = function (space, spaceAuth) {
-        var role = "none";
-
-        if (spaceAuth && (spaceAuth === space.edit_hash)) {
-            role = "editor";
-        } else {
-            if (space.access_mode === "public") {
-                role = "viewer";
-            } else {
-                role = "none";
-            }
-
-        }
-
-        if (req.user) {
-            db.getUserRoleInSpace(space, req.user, function (newRole) {
-                if (newRole == "admin" && (role == "editor" || role == "viewer")) {
-                    finalizeReq(space, newRole);
-                } else if (newRole == "editor" && (role == "viewer")) {
-                    finalizeReq(space, newRole);
-                } else {
-                    finalizeReq(space, role);
-                }
-            });
-        } else {
-            finalizeReq(space, role);
-        }
-    };
-
-    var userMapping = {
-        '_id': 1,
-        'nickname': 1,
-        'email': 1
-    };
-
-    db.Space.findOne({
-        where: {
-            "_id": spaceId
-        }
-    }).then(function (space) {
-
-        //.populate("creator", userMapping)
-        //if (err) {
-        //  res.status(400).json(err);
-        //} else {
-        if (!space) {
-            res.status(404).json({ "error": "space_not_found" });
-            return;
-        }
-
-
-        console.log('space.access_mode', space.access_mode);
-
-        if (space.access_mode === "public") {
-            if (!space.password) {
-                finalizeAnonymousLogin(space, req["spaceAuth"]);
-                return;
-            }
-
-            if (!req.spacePassword) {
-                res.status(401).json({
-                    "error": "password_required"
-                });
-                return;
-            }
-
-            if (req.spacePassword !== space.password) {
-                res.status(403).json({
-                    "error": "password_wrong"
-                });
-                return;
-            }
-            finalizeAnonymousLogin(space, req["spaceAuth"]);
-            return;
-        }
-
-        // space is private
-
-        // special permission for screenshot/pdf export from backend
-        if (req.query['api_token'] && req.query['api_token'] == config.get('phantom_api_secret')) {
-            finalizeReq(space, "viewer");
-            return;
-        }
-
-        if (req.user) {
-            db.getUserRoleInSpace(space, req.user, function (role) {
-                if (role === "none") {
-                    finalizeAnonymousLogin(space, req["spaceAuth"]);
-                    return;
-                }
-                finalizeReq(space, role);
-
-            });
-            return;
-        }
-        if (req.spaceAuth && space.edit_hash) {
-            finalizeAnonymousLogin(space, req["spaceAuth"]);
-        }
-
-        res.status(403).json({
-            "error": "auth_required"
-        });
-
-    }
 
 }
